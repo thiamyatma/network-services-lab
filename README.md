@@ -35,7 +35,7 @@ This project documents the deployment, configuration, testing, and security hard
 - BIND9 (DNS)
 - Kea DHCPv4
 - NFSv4.2
-- NTP
+- Chrony / NTP
 - Linux Firewall
 - Network Monitoring
 
@@ -49,7 +49,7 @@ This project documents the deployment, configuration, testing, and security hard
 | DNS | Name resolution | Completed |
 | DHCP | Automatic IP configuration | Completed |
 | NFS | Linux network file sharing | Completed |
-| NTP | Time synchronization | Planned |
+| NTP | Centralized time synchronization | Completed |
 | Firewall | Network traffic filtering | Planned |
 | Monitoring | Service and system monitoring | Planned |
 
@@ -80,6 +80,7 @@ network-services-lab/
 ├── nfs/
 │   └── README.md
 ├── ntp/
+│   └── README.md
 ├── firewall/
 ├── monitoring/
 └── screenshots/
@@ -176,6 +177,43 @@ The implementation was validated through:
 The NFS service is enabled at system startup.
 
 Detailed documentation: [NFS Infrastructure](nfs/README.md)
+
+### Phase 7 — Network Time Synchronization (NTP)
+
+Chrony has been deployed on Debian GNU/Linux 13 as the internal NTP server and on Kali Linux as an NTP client.
+
+The Debian server synchronizes its clock with external NTP sources using the Debian NTP pool:
+
+`2.debian.pool.ntp.org`
+
+The internal client network (`10.10.10.0/24`) is authorized through the Chrony access control directive:
+
+```conf
+allow 10.10.10.0/24
+```
+
+Kali Linux uses the Debian server (`10.10.10.10`) as its preferred NTP source:
+
+```conf
+server 10.10.10.10 iburst prefer
+```
+
+The service uses UDP port 123.
+
+The implementation was validated through:
+
+- Successful Chrony installation and service activation on both systems.
+- Debian external time synchronization, with a normal leap status.
+- Successful authorization of the Kali client.
+- Verification of the UDP port 123 listener.
+- Selection of `srv.nslab.test` as the Kali synchronization source.
+- Confirmation that the Kali system clock is synchronized.
+- Verification that Debian recognizes Kali as an NTP client, with no dropped requests in the observed result.
+- Alignment of the Debian and Kali timezone configuration to `Africa/Dakar` (UTC+0).
+
+Full operating system reboot persistence and firewall-specific filtering were not tested.
+
+Detailed documentation: [NTP Infrastructure](ntp/README.md)
 
 ---
 

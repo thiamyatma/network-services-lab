@@ -30,11 +30,11 @@ This project documents the deployment, configuration, testing, and security hard
 - Kali Linux
 - Oracle VirtualBox
 - TCP/IP
-- SSH
-- DNS
-- DHCP (Kea)
+- OpenSSH
 - Samba / SMB
-- NFS
+- BIND9 (DNS)
+- Kea DHCPv4
+- NFSv4.2
 - NTP
 - Linux Firewall
 - Network Monitoring
@@ -48,7 +48,7 @@ This project documents the deployment, configuration, testing, and security hard
 | Samba | Network file sharing | Completed |
 | DNS | Name resolution | Completed |
 | DHCP | Automatic IP configuration | Completed |
-| NFS | Linux file sharing | Planned |
+| NFS | Linux network file sharing | Completed |
 | NTP | Time synchronization | Planned |
 | Firewall | Network traffic filtering | Planned |
 | Monitoring | Service and system monitoring | Planned |
@@ -78,6 +78,7 @@ network-services-lab/
 ├── dhcp/
 │   └── README.md
 ├── nfs/
+│   └── README.md
 ├── ntp/
 ├── firewall/
 ├── monitoring/
@@ -88,21 +89,35 @@ network-services-lab/
 
 - Apply the principle of least privilege.
 - Prefer SSH key-based authentication.
-- Restrict unnecessary network access.
+- Restrict network access to authorized clients.
 - Protect credentials and private keys.
+- Apply appropriate file and directory permissions.
+- Disable unnecessary services and protocols where appropriate.
 - Document security configurations and validation tests.
 
 ## Project Status
 
 ### Phase 1 — Network Infrastructure
 
-The Debian server and Kali client have been configured on the same isolated VirtualBox internal network. Inter-machine connectivity has been successfully validated.
+The Debian server and Kali client have been configured on the same isolated VirtualBox internal network.
 
-### Phase 2 — Secure Remote Administration
+Inter-machine connectivity has been successfully validated through ICMP testing.
 
-The OpenSSH server has been deployed and validated. Public-key authentication is configured for two authorized users (`tech1` and `tech2`). Password authentication and direct root login are disabled.
+### Phase 2 — Secure Remote Administration (SSH)
 
-### Phase 3 — DNS Infrastructure
+The OpenSSH server has been deployed and validated.
+
+Public-key authentication is configured for two authorized users (`tech1` and `tech2`). Password authentication and direct root login are disabled.
+
+### Phase 3 — Network File Sharing (Samba)
+
+Samba has been deployed on Debian to provide authenticated network file sharing.
+
+A restricted shared directory has been configured with group-based access control and appropriate file and directory permissions.
+
+Access and file operations have been validated from Kali Linux and a Windows client.
+
+### Phase 4 — DNS Infrastructure
 
 BIND9 has been deployed and configured on the Debian server to provide authoritative forward and reverse DNS resolution for the laboratory network.
 
@@ -114,7 +129,7 @@ The configuration was validated through direct DNS queries, forward and reverse 
 
 Detailed documentation: [DNS Infrastructure](dns/README.md)
 
-### Phase 4 — DHCP Infrastructure
+### Phase 5 — DHCP Infrastructure
 
 Kea DHCPv4 has been deployed on Debian GNU/Linux 13 to provide automatic IPv4 configuration to clients connected to the `NSLAB-NET` laboratory network.
 
@@ -127,6 +142,40 @@ The implementation was validated through a real DHCP client test from Kali Linux
 The original static client configuration was restored after testing.
 
 Detailed documentation: [DHCP Infrastructure](dhcp/README.md)
+
+### Phase 6 — Network File Sharing (NFS)
+
+NFS has been deployed on Debian GNU/Linux 13 to provide Linux-native network file sharing with the Kali Linux client.
+
+The NFS server exports `/srv/nfs/partage` and restricts access to the authorized client `10.10.10.20`.
+
+The export is configured with the following options:
+
+- `rw`: allows read and write operations.
+- `sync`: synchronizes write operations before acknowledging them.
+- `no_subtree_check`: disables subtree verification.
+- `root_squash`: maps remote root requests to an anonymous identity.
+
+The client mounts the shared directory using NFSv4.2:
+
+```bash
+sudo mount -t nfs4 -o vers=4.2 \
+10.10.10.10:/srv/nfs/partage /mnt/nfs-partage
+```
+
+The implementation was validated through:
+
+- Successful NFSv4.2 mounting from Kali Linux.
+- File creation and write operations from the client.
+- Verification of shared file contents on the Debian server.
+- Successful NFS service restart.
+- Verification that the export remained available after the restart.
+- Confirmation that the Kali client retained access.
+- A `root_squash` security test, which correctly denied root write access from the client.
+
+The NFS service is enabled at system startup.
+
+Detailed documentation: [NFS Infrastructure](nfs/README.md)
 
 ---
 

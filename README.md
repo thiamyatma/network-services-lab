@@ -44,7 +44,7 @@ This project documents the deployment, configuration, testing, and security hard
 | Service | Objective | Status |
 |---|---|---|
 | Network connectivity | Establish server-client communication | Completed |
-| SSH | Secure remote administration | Planned |
+| SSH | Secure remote administration | completed |
 | Samba | Network file sharing | Planned |
 | DNS | Name resolution | Planned |
 | DHCP | Automatic IP configuration | Planned |
@@ -98,6 +98,9 @@ The Debian server and Kali client have been configured on the same isolated Virt
 
 Further services will be implemented and documented progressively.
 
+### Phase 2 — Secure Remote Administration
+
+The OpenSSH server has been deployed and validated. Public-key authentication is configured for two authorized users (`tech1` and `tech2`). Password authentication and direct root login are disabled.
 ---
 
 **Author:** Ibrahima Yatma Thiam  

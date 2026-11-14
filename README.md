@@ -46,7 +46,7 @@ This project documents the deployment, configuration, testing, and security hard
 | Network connectivity | Establish server-client communication | Completed |
 | SSH | Secure remote administration | Completed |
 | Samba | Network file sharing | Completed |
-| DNS | Name resolution | Planned |
+| DNS | Name resolution | Completed |
 | DHCP | Automatic IP configuration | Planned |
 | NFS | Linux file sharing | Planned |
 | NTP | Time synchronization | Planned |
@@ -74,12 +74,14 @@ network-services-lab/
 ├── ssh/
 ├── samba/
 ├── dns/
+│   └── README.md
 ├── dhcp/
 ├── nfs/
 ├── ntp/
 ├── firewall/
 ├── monitoring/
 └── screenshots/
+
 ```
 
 ## Security Principles
@@ -102,6 +104,18 @@ Further services will be implemented and documented progressively.
 
 The OpenSSH server has been deployed and validated. Public-key authentication is configured for two authorized users (`tech1` and `tech2`). Password authentication and direct root login are disabled.
 ---
+
+### Phase 3 — DNS Infrastructure
+
+BIND9 has been deployed and configured on the Debian server to provide authoritative forward and reverse DNS resolution for the laboratory network.
+
+The DNS infrastructure also supports recursive queries for external domains through configured forwarders.
+
+On the Kali client, NetworkManager and systemd-resolved provide split DNS routing, directing internal laboratory queries to the Debian DNS server while preserving the main network's Internet DNS configuration.
+
+The configuration was validated through direct DNS queries, forward and reverse lookups, external name resolution, and a reboot persistence test.
+
+Detailed documentation: [DNS Infrastructure](dns/README.md)
 
 **Author:** Ibrahima Yatma Thiam  
 **Project:** Network Services Lab  

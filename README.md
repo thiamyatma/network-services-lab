@@ -44,8 +44,8 @@ This project documents the deployment, configuration, testing, and security hard
 | Service | Objective | Status |
 |---|---|---|
 | Network connectivity | Establish server-client communication | Completed |
-| SSH | Secure remote administration | completed |
-| Samba | Network file sharing | Planned |
+| SSH | Secure remote administration | Completed |
+| Samba | Network file sharing | Completed |
 | DNS | Name resolution | Planned |
 | DHCP | Automatic IP configuration | Planned |
 | NFS | Linux file sharing | Planned |

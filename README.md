@@ -343,7 +343,7 @@ Full audit report: [Phase 9 — Documentation, Backup and Final Security Audit](
 ## Future Improvements
 
 The following activities are planned for future development:
-
+- Document Grafana security hardening and access control validation ([Grafana Hardening Report](monitoring/GRAFANA-HARDENING.md)).
 - Deploy centralized monitoring for system resources and network services.
 - Implement service availability checks and alerting.
 - Improve remote web administration security with HTTPS.
